@@ -215,10 +215,10 @@
 
           // stop slideshow
           stop();
-          
+
           // broadcast swiping direction
-          runSwipingCallback(delta.x < 0 ? 1 : -1);
-          
+          runSwipingCallback(delta.x < 0 ? 1 : -1, delta.x);
+
           // increase resistance if first or last slide
           if (options.continuous) { // we don't add resistance at the end
 
@@ -530,11 +530,11 @@
       }
     }
 
-    function runSwipingCallback(dir) {
+    function runSwipingCallback(dir, delta) {
       if (options.swipingCallback) {
-        options.swipingCallback(dir);
+        options.swipingCallback(dir, delta);
       }
-    }    
+    }
 
     function circle(index) {
 
