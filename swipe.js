@@ -216,9 +216,6 @@
           // stop slideshow
           stop();
 
-          // broadcast swiping direction
-          runSwipingCallback(delta.x < 0 ? 1 : -1, delta.x);
-
           // increase resistance if first or last slide
           if (options.continuous) { // we don't add resistance at the end
 
@@ -236,6 +233,9 @@
                 ) ?
                ( Math.abs(delta.x) / width + 1 )      // determine resistance level
                : 1 );                                 // no resistance if false
+
+            // broadcast swiping delta x
+            runSwipingCallback(delta.x);
 
             // translate 1:1
             translate(index-1, delta.x + slidePos[index-1], 0);
@@ -260,6 +260,9 @@
         var isPastBounds =
             !index && delta.x > 0 ||                      // if first slide and slide amt is greater than 0
             index === slides.length - 1 && delta.x < 0;   // or if last slide and slide amt is less than 0
+
+        // broadcast touchend
+        runEndCallback();
 
         if (options.continuous) {
           isPastBounds = false;
@@ -524,15 +527,21 @@
       }
     }
 
+    function runEndCallback() {
+      if (options.endCallback) {
+        options.endCallback();
+      }
+    }
+
     function runTransitionEnd(pos, index) {
       if (options.transitionEnd) {
         options.transitionEnd(pos, index);
       }
     }
 
-    function runSwipingCallback(dir, delta) {
+    function runSwipingCallback(dir) {
       if (options.swipingCallback) {
-        options.swipingCallback(dir, delta);
+        options.swipingCallback(dir);
       }
     }
 
