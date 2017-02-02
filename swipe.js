@@ -261,9 +261,6 @@
             !index && delta.x > 0 ||                      // if first slide and slide amt is greater than 0
             index === slides.length - 1 && delta.x < 0;   // or if last slide and slide amt is less than 0
 
-        // broadcast touchend
-        runEndCallback();
-
         if (options.continuous) {
           isPastBounds = false;
         }
@@ -326,6 +323,9 @@
             }
           }
         }
+
+        // broadcast touchend
+        runEndCallback();
 
         // kill touchmove and touchend event listeners until touchstart called again
         if (isMouseEvent(event)) {
