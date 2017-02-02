@@ -106,6 +106,7 @@
     var index = parseInt(options.startSlide, 10) || 0;
     var speed = options.speed || 300;
     options.continuous = options.continuous !== undefined ? options.continuous : true;
+    options.elastic = options.elastic !== undefined ? options.elastic : true;
 
     // AutoRestart option: auto restart slideshow after user's touch event
     options.autoRestart = options.autoRestart !== undefined ? options.autoRestart : false;
@@ -224,6 +225,12 @@
             translate(circle(index+1), delta.x + slidePos[circle(index+1)], 0);
 
           } else {
+
+            if (!options.elastic) {
+              if ( (index === 0 && delta.x > 0) || (index === length - 1 && delta.x < 0) ) {
+                return false;
+              }
+            }
 
             delta.x =
               delta.x /
