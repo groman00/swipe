@@ -49,6 +49,7 @@
 
     // setup auto slideshow
     var delay = options.auto || 0;
+    var isVertical = options.direction === 'vertical';
     var interval;
 
     // utilities
@@ -197,11 +198,20 @@
           touches = event.touches[0];
         }
 
+
         // measure change in x and y
         delta = {
           x: touches.pageX - start.x,
           y: touches.pageY - start.y
         };
+
+        //invert direction
+        if (isVertical) {
+          delta = {
+            y: delta.x,
+            x: delta.y
+          };
+        }
 
         // determine if scrolling test has run - one time test
         if ( typeof isScrolling === 'undefined') {
@@ -474,21 +484,27 @@
       // create an array to store current positions of each slide
       slidePos = new Array(slides.length);
 
-      // determine width of each slide
-      width = container.getBoundingClientRect().width || container.offsetWidth;
-
-      element.style.width = (slides.length * width * 2) + 'px';
+      if (isVertical) {
+        width = container.getBoundingClientRect().height || container.offsetHeight;
+        element.style.height = (slides.length * width * 2) + 'px';
+      } else {
+        // determine width of each slide
+        width = container.getBoundingClientRect().width || container.offsetWidth;
+        element.style.width = (slides.length * width * 2) + 'px';
+      }
 
       // stack elements
       var pos = slides.length;
       while(pos--) {
         var slide = slides[pos];
 
-        slide.style.width = width + 'px';
+        //slide.style.width = width + 'px';
+        slide.style[isVertical ? 'height' : 'width'] = width + 'px';
         slide.setAttribute('data-index', pos);
 
         if (browser.transitions) {
-          slide.style.left = (pos * -width) + 'px';
+          // slide.style.left = (pos * -width) + 'px';
+          slide.style[isVertical ? 'top' : 'left'] = (pos * -width) + 'px';
           move(pos, index > pos ? -width : (index < pos ? width : 0), 0);
         }
       }
@@ -641,10 +657,19 @@
         style.OTransitionDuration =
         style.transitionDuration = speed + 'ms';
 
-      style.webkitTransform = 'translate(' + dist + 'px,0)' + 'translateZ(0)';
-      style.msTransform =
-        style.MozTransform =
-        style.OTransform = 'translateX(' + dist + 'px)';
+
+      if (isVertical) {
+        style.webkitTransform = 'translate(0, ' + dist + 'px)' + 'translateZ(0)';
+        style.msTransform =
+          style.MozTransform =
+          style.OTransform = 'translateY(0, ' + dist + 'px)';
+      } else {
+        style.webkitTransform = 'translate(' + dist + 'px,0)' + 'translateZ(0)';
+        style.msTransform =
+          style.MozTransform =
+          style.OTransform = 'translateX(' + dist + 'px)';
+      }
+
 
     }
 
